@@ -1,5 +1,16 @@
 version: "3"
 services:
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    ports:
+      - "32000:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: projectdb
+    volumes:
+      - ./datavolume:/var/lib/mysql
+      
   flask:
     container_name: flask
     build: .
@@ -11,11 +22,5 @@ services:
     volumes: 
       - .:/aplication
 
-  mysql:
-    container_name: mysql
-    image: mysql:5.7
-    ports:
-      - "32000:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: projectdb
+volumes:
+  datavolume:
