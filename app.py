@@ -4,7 +4,7 @@ from flask import Flask
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@mysql/projectdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@postgresql/mydatabase'
 db = SQLAlchemy(app)
 db.create_all()
 
@@ -18,8 +18,17 @@ def index():
     response = ''
     for i in Users.query.all():
         response += f'{i.id} - {i.username} - {i.enrolment} - {i.email}'
+        response += '<br>'
     return response
 
+
+
+
+# reinicie a aplicação apos acessar esta rota
+@app.route('/dropall')
+def dropall():
+    from db import db
+    db.drop_all()
+
 if __name__ == '__main__':
-    __import__('time').sleep(10)
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0',debug=True)
