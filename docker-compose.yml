@@ -1,11 +1,13 @@
 version: "3"
+
 networks:
-    postgresnet:
+  postgresnet:
 
 services:
   postgresql:  
+    restart: on-failure
     image: postgres:9.6 
-    hostname: postgresql          
+    hostname: postgresql
     container_name: postgresql
     environment:                                                            
       - POSTGRES_USER=admin
@@ -13,8 +15,11 @@ services:
       - POSTGRES_DB=projectdb  
     networks:
       - postgresnet
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   flask:
+    restart: on-failure
     build: .
     container_name: flask
     volumes: 
@@ -23,6 +28,8 @@ services:
       - postgresql
     ports:
       - "5000:5000"
-    restart: on-failure
     networks:                                                               
       - postgresnet   
+
+volumes:
+  postgres-data:
