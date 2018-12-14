@@ -1,4 +1,4 @@
 from app import db
-from db import users
+from db import tables
 
 db.create_all()
