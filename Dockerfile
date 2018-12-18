@@ -2,4 +2,4 @@ FROM python:3.6
 ADD . /aplication
 WORKDIR /aplication
 RUN pip install -r requirements.txt
-CMD python app.py
+CMD python run.py
