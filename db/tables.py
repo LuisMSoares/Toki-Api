@@ -29,6 +29,11 @@ class Subject(db.Model):
         self.user_id = user_id
         self.subname = subname
         self.subgroup = subgroup
+    
+    def todict(self):
+        keys = ['id', 'user_id', 'subname', 'subgroup']
+        values = [self.id, self.user_id, self.subname, self.subgroup]
+        return dict(zip(keys,values))
 
 class Absence(db.Model):
     __tablename__ = 'falta'
@@ -43,4 +48,9 @@ class Absence(db.Model):
         self.user_id = user_id
         year, month, day = sdate.split('-')# sdate = year-month-day -> 2018-12-14
         self.date = datetime.date(int(year), int(month), int(day))
+
+    def todict(self):
+        keys = ['id', 'subject_id', 'user_id', 'date']
+        values = [self.id, self.subject_id, self.user_id, self.date]
+        return dict(zip(keys,values))
 

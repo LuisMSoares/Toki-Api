@@ -3,14 +3,12 @@ from sqlalchemy.exc import InvalidRequestError, IntegrityError
 from flask import Flask, request, jsonify
 
 
-from db.tables import User, Subject, Absence
-
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@postgresql/projectdb'
 db = SQLAlchemy(app)
 
+from db.tables import User, Subject, Absence
 
 def dbcommit(obj):
     db.session.add(obj)
@@ -48,17 +46,21 @@ def register():
 
 @app.route('/listsubject', methods=['GET'])
 def listsbject():
-    if userauth(*request.auth):
-        return 'usuario logado'
-    return 'erro ao logar'
+    auth = request.authorization
+    user_id = (userauth(auth.username,auth.password)).id
+    disci = Subject.query.filter_by(user_id=user_id).all()
+    db.session.commit()
+    values = [row.todict() for row in disci]
+    return jsonify({'values':f'{values}'}), 200
 
 
 def userauth(username,password):
-    user = User.query.filter_by(username=username).first()
+    user = User.query.filter_by(email=username,password=password).first()
+    db.session.commit()
     if not user:
         return False
     if user.password == password:
-        return True
+        return user
     return False
 
 
@@ -66,6 +68,7 @@ def recreate_db():
     from db import db
     db.drop_all()
     db.create_all()
+    db.session.commit()
     print(' * Recreating Database')
 if __name__ == '__main__':
     recreate_db() # comment this line to deactivate
