@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from sqlalchemy.exc import InvalidRequestError, IntegrityError
+from sqlalchemy.exc import InvalidRequestError, IntegrityError, DataError #incluir exception dataerror
 from app.db import User, Absence, Subject
 from app.db import bluep_db as db
 
@@ -21,7 +21,7 @@ def userauth(username,password):
 
 
 @mapp.route('/reguser', methods=['POST'])
-def register():
+def reguser():
     rjson = request.json
     user = User(username=rjson['uname'],
                 password=rjson['passw'],
@@ -37,7 +37,7 @@ def register():
 
 
 @mapp.route('/listsubject', methods=['GET'])
-def listsbject():
+def listsubject():
     auth = request.authorization
     user = userauth(auth.username,auth.password)
     if not user:
@@ -46,4 +46,25 @@ def listsbject():
     values = [row.todict() for row in disci]
     if len(values) == 0:
         return jsonify({'Error':'Nenhuma disciplina cadastrada pelo usuario foi encontrada'}), 200
-    return jsonify({'values':f'{values}'}), 200
+    data = {}
+    data['values'] = values
+    return jsonify(data), 200
+
+
+@mapp.route('/regsubject', methods=['POST'])
+def regsubject():
+    auth = request.authorization
+    user = userauth(auth.username,auth.password)
+    if not user:
+        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
+    rjson = request.json
+    subject = Subject(user_id=user.id,
+                      subname=rjson['sname'],
+                      subgroup=rjson['sgroup'])
+    try:
+        db.session.add(subject)
+        db.session.commit()
+    except IntegrityError:
+        db.session().rollback()
+        return jsonify({'Error': 'Ocorreu algum erro ao tentar realizar o cadastro!'}), 500
+    return jsonify({'Success': 'Registro realizado com sucesso'}), 201
