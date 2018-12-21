@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import InvalidRequestError, IntegrityError, DataError #incluir exception dataerror
-from app.db import User, Absence, Subject
+from app.db import User, Absence, qtAbsence, Subject
 from app.db import bluep_db as db
 
 mapp = Blueprint('mapp',__name__)
@@ -68,3 +68,13 @@ def regsubject():
         db.session().rollback()
         return jsonify({'Error': 'Ocorreu algum erro ao tentar realizar o cadastro!'}), 500
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
+
+
+@mapp.route('/absence/validade', methods=['POST'])
+def regsubject():
+    rjson = request.json # rjson['dvcid'] -> devide id
+    absence = Absence(subject_id=rjson['subjid'],
+                      user_id=rjson['userid'],
+                      vdate=rjson['vdate'])
+    qtabsence = qtAbsence(subject_id=rjson['subjid'],
+                          vdate=rjson['vdate'])
