@@ -71,10 +71,29 @@ def regsubject():
 
 
 @mapp.route('/absence/validade', methods=['POST'])
-def regsubject():
+def abvalidade():
     rjson = request.json # rjson['dvcid'] -> devide id
     absence = Absence(subject_id=rjson['subjid'],
                       user_id=rjson['userid'],
-                      vdate=rjson['vdate'])
+                      vdate=rjson['vdate'],
+                      device_id=rjson['dvcid'])
     qtabsence = qtAbsence(subject_id=rjson['subjid'],
                           vdate=rjson['vdate'])
+    try:
+        db.session.add(qtabsence)
+        db.session.commit()
+    except IntegrityError:
+        db.session().rollback()
+
+
+    try:
+        db.session.add(absence)
+        db.session.commit()
+    except IntegrityError:
+        db.session().rollback()
+        absences = Absence.query.filter_by(device_id=rjson['dvcid']).all()
+        for row in absences:
+            db.session.delete(row)
+        db.session.commit()
+
+    return jsonify({'Success': 'Registro realizado com sucesso'}), 201
