@@ -45,7 +45,7 @@ def listsubject():
     disci = Subject.query.filter_by(user_id=user.id).all()
     values = [row.todict() for row in disci]
     if len(values) == 0:
-        return jsonify({'Error':'Nenhuma disciplina cadastrada pelo usuario foi encontrada'}), 200
+        return jsonify({'Error':'Nenhuma disciplina cadastrada pelo usuario foi encontrada'}), 404
     data = {}
     data['values'] = values
     return jsonify(data), 200
@@ -104,5 +104,13 @@ def relationsub():
     if not user:
         return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
     rjson = request.json
-    #select distinct subject_id from presencas where user_id=1
-    
+    #  select distinct subject_id from presencas where user_id=1
+    rabsence = Absence.query.distinct(Absence.subject_id).filter_by(user_id=user.id)
+    if rabsence == None:
+        return jsonify({'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}), 404
+    subids = [row.subject_id for row in rabsence]
+    disci = Subject.query.filter(Subject.id.in_(subids))
+    values = [row.todict() for row in disci]
+    data = {}
+    data['values'] = values
+    return jsonify(data), 200
