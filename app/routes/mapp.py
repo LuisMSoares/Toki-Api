@@ -72,7 +72,7 @@ def regsubject():
 
 @mapp.route('/absence/validade', methods=['POST'])
 def abvalidade():
-    rjson = request.json # rjson['dvcid'] -> devide id
+    rjson = request.json
     absence = Absence(subject_id=rjson['subjid'],
                       user_id=rjson['userid'],
                       vdate=rjson['vdate'],
@@ -80,13 +80,11 @@ def abvalidade():
     qtabsence = qtAbsence(subject_id=rjson['subjid'],
                           vdate=rjson['vdate'])
     try:
-        db.session.add(qtabsence)
-        db.session.commit()
-    except IntegrityError:
-        db.session().rollback()
-
-
-    try:
+        try:
+            db.session.add(qtabsence)
+            db.session.commit()
+        except IntegrityError:
+            db.session().rollback()
         db.session.add(absence)
         db.session.commit()
     except IntegrityError:
@@ -95,5 +93,16 @@ def abvalidade():
         for row in absences:
             db.session.delete(row)
         db.session.commit()
-
+        return jsonify({'Success': 'Dispositivos duplicados detectados'}), 201
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
+
+
+@mapp.route('/subject/relation', methods=['GET'])
+def relationsub():
+    auth = request.authorization
+    user = userauth(auth.username,auth.password)
+    if not user:
+        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
+    rjson = request.json
+    #select distinct subject_id from presencas where user_id=1
+    
