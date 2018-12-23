@@ -72,6 +72,10 @@ def regsubject():
 
 @mapp.route('/absence/validade', methods=['POST'])
 def abvalidade():
+    auth = request.authorization
+    user = userauth(auth.username,auth.password)
+    if not user:
+        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
     rjson = request.json
     absence = Absence(subject_id=rjson['subjid'],
                       user_id=rjson['userid'],
@@ -87,9 +91,14 @@ def abvalidade():
             db.session().rollback()
         db.session.add(absence)
         db.session.commit()
-    except IntegrityError:
+    except IntegrityError as err:
+        print(err)
         db.session().rollback()
-        absences = Absence.query.filter_by(device_id=rjson['dvcid']).all()
+        if 'duplicated_validated' in f'{err}':
+            return jsonify({'Success': 'Preseça já registrada anteriormente'}), 201
+        absences = Absence.query.filter_by(device_id=rjson['dvcid'],subject_id=rjson['subjid']).all()
+        if absences[0].user_id==rjson['userid']:
+            return jsonify({'Success': 'Preseça já registrada anteriormente'}), 201
         for row in absences:
             db.session.delete(row)
         db.session.commit()
@@ -103,8 +112,6 @@ def relationsub():
     user = userauth(auth.username,auth.password)
     if not user:
         return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
-    rjson = request.json
-    #  select distinct subject_id from presencas where user_id=1
     rabsence = Absence.query.distinct(Absence.subject_id).filter_by(user_id=user.id)
     if rabsence == None:
         return jsonify({'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}), 404
@@ -114,3 +121,41 @@ def relationsub():
     data = {}
     data['values'] = values
     return jsonify(data), 200
+
+
+@mapp.route('/subject/absence/<int:subjid>', methods=['GET'])
+def getabsences(subjid):
+    auth = request.authorization
+    user = userauth(auth.username,auth.password)
+    if not user:
+        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
+    qtaulas = qtAbsence.query.filter_by(subject_id=subjid).count()
+    qtdispo = Absence.query.filter_by(subject_id=subjid,user_id=user.id).count()
+    data = {'subjid':subjid,
+            'presencas':qtdispo,
+            'faltas':qtaulas-qtdispo }
+    return jsonify(data), 200
+
+
+@mapp.route('/subject/allabsence/<int:subjid>', methods=['GET'])
+def getallabsences(subjid):
+    auth = request.authorization
+    user = userauth(auth.username,auth.password)
+    if not user:
+        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401    
+    abusers = Absence.query.distinct(Absence.user_id).filter_by(subject_id=subjid)
+    if abusers == None:
+        return jsonify({'Error':'Nenhum discente relacionado a disciplina foi encontrado'}), 404
+    qtaulas = qtAbsence.query.filter_by(subject_id=subjid).count()
+    data = []
+    for u in abusers:
+        dic = {}
+        qtdispo = Absence.query.filter_by(subject_id=subjid,user_id=u.user_id)
+        dic[str(u.user_id)] = [row.date.strftime("%Y-%m-%d") for row in qtdispo]
+        dic['presencas'] = qtdispo.count()
+        dic['faltas'] = qtaulas - qtdispo.count()
+        data.append(dic)
+    return jsonify({'values':data}), 200
+
+    
+    

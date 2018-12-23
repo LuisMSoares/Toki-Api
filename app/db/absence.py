@@ -25,7 +25,9 @@ class Absence(db.Model):
         return dict(zip(keys,values))
 
     __table_args__ = (
-        db.Index('only_absence', user_id, device_id, date, unique=True),
+        db.Index('duplicated_device1', subject_id, device_id, user_id, date, unique=True),
+        db.Index('duplicated_device2', subject_id, device_id, date, unique=True),
+        db.Index('duplicated_validated', subject_id, user_id, date, unique=True),
     )
 
 
