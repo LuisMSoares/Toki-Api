@@ -24,18 +24,18 @@ with app.app_context():
 
 # Routes blueprints
 
-#  absence route
-from app.routes.rabsence import abapp
-app.register_blueprint(abapp)
-#  subject route
-from app.routes.rsubject import sapp
-app.register_blueprint(sapp)
 #  user route
 from app.routes.ruser import uapp
-app.register_blueprint(uapp)
+app.register_blueprint(uapp, url_prefix='/user')
+#  subject route
+from app.routes.rsubject import sapp
+app.register_blueprint(sapp, url_prefix='/subject')
+#  absence route
+from app.routes.rabsence import abapp
+app.register_blueprint(abapp, url_prefix='/absence')
 #  validade absence route
 from app.routes.rvabsence import abvapp
-app.register_blueprint(abvapp)
+app.register_blueprint(abvapp, url_prefix='/absence')
 
 
 # Status code routes

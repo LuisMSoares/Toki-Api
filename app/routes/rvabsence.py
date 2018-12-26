@@ -7,7 +7,7 @@ from app.routes import userauth
 abvapp = Blueprint('rvabsence',__name__)
 
 
-@abvapp.route('/absence/validade', methods=['POST'])
+@abvapp.route('/validate', methods=['POST'])
 def abvalidade():
     auth = request.authorization
     user = userauth(auth.username,auth.password)

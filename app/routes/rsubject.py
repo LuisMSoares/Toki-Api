@@ -7,23 +7,7 @@ from app.routes import userauth
 sapp = Blueprint('rsubject',__name__)
 
 
-
-@sapp.route('/listsubject', methods=['GET'])
-def listsubject():
-    auth = request.authorization
-    user = userauth(auth.username,auth.password)
-    if not user:
-        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
-    disci = Subject.query.filter_by(user_id=user.id).all()
-    values = [row.todict() for row in disci]
-    if len(values) == 0:
-        return jsonify({'Error':'Nenhuma disciplina cadastrada pelo usuario foi encontrada'}), 404
-    data = {}
-    data['values'] = values
-    return jsonify(data), 200
-
-
-@sapp.route('/regsubject', methods=['POST'])
+@sapp.route('/register', methods=['POST'])
 def regsubject():
     auth = request.authorization
     user = userauth(auth.username,auth.password)
@@ -41,9 +25,7 @@ def regsubject():
         return jsonify({'Error': 'Ocorreu algum erro ao tentar realizar o cadastro!'}), 500
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
-
-
-@sapp.route('/subject/relation', methods=['GET'])
+@sapp.route('/user', methods=['GET'])
 def relationsub():
     auth = request.authorization
     user = userauth(auth.username,auth.password)
@@ -55,6 +37,20 @@ def relationsub():
     subids = [row.subj_id for row in rabsence]
     disci = Subject.query.filter(Subject.id.in_(subids))
     values = [row.todict() for row in disci]
+    data = {}
+    data['values'] = values
+    return jsonify(data), 200
+
+@sapp.route('/teacher', methods=['GET'])
+def listsubject():
+    auth = request.authorization
+    user = userauth(auth.username,auth.password)
+    if not user:
+        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
+    disci = Subject.query.filter_by(user_id=user.id).all()
+    values = [row.todict() for row in disci]
+    if len(values) == 0:
+        return jsonify({'Error':'Nenhuma disciplina cadastrada pelo usuario foi encontrada'}), 404
     data = {}
     data['values'] = values
     return jsonify(data), 200

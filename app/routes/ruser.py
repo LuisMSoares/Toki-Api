@@ -7,7 +7,7 @@ uapp = Blueprint('ruser',__name__)
 
 
 
-@uapp.route('/reguser', methods=['POST'])
+@uapp.route('/register', methods=['POST'])
 def reguser():
     rjson = request.json
     user = User(username=rjson['uname'],
