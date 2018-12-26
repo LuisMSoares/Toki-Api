@@ -2,22 +2,10 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import InvalidRequestError, IntegrityError, DataError #incluir exception dataerror
 from app.db import User, Absence, qtAbsence, Subject, Subjectur
 from app.db import bluep_db as db
+from app.routes import userauth
 
 mapp = Blueprint('mapp',__name__)
 
-
-@mapp.route('/')
-def index():
-    return 'ola'
-
-
-def userauth(username,password):
-    user = User.query.filter_by(email=username,password=password).first()
-    if not user:
-        return False
-    if user.password == password:
-        return user
-    return False
 
 
 @mapp.route('/reguser', methods=['POST'])
@@ -124,7 +112,7 @@ def relationsub():
     if not user:
         return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
     rabsence = Subjectur.query.filter_by(user_id=user.id)
-    if rabsence == None:
+    if rabsence.count() == 0:
         return jsonify({'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}), 404
     subids = [row.subj_id for row in rabsence]
     disci = Subject.query.filter(Subject.id.in_(subids))

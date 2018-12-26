@@ -8,7 +8,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@postgresql/projectdb'
 bluep_db.init_app(app)
 with app.app_context():
-    bluep_db.drop_all()
+    from sqlalchemy.exc import OperationalError
+    try:
+        #bluep_db.drop_all()
+        print(' * Drop all tables!')
+    except OperationalError:
+        pass
     bluep_db.create_all()
 
 from app.routes.mapp import mapp
