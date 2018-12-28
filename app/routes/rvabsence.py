@@ -9,21 +9,18 @@ abvapp = Blueprint('rvabsence',__name__)
 
 @abvapp.route('/validate', methods=['POST'])
 def abvalidade():
-    auth = request.authorization
-    user = userauth(auth.username,auth.password)
-    if not user:
-        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
+    userid = get_jwt_identity()
     rjson = request.json
     # registro da presença
     absence = Absence(subject_id=rjson['subjid'],
-                      user_id=user.id,
+                      user_id=userid,
                       vdate=rjson['vdate'],
                       device_id=rjson['dvcid'])
     # computação de quantidade de aulas lecionadas
     qtabsence = qtAbsence(subject_id=rjson['subjid'],
                           vdate=rjson['vdate'])
     # relação usuario-disciplina
-    subjectur = Subjectur(user_id=user.id,
+    subjectur = Subjectur(user_id=userid,
                           subj_id=rjson['subjid'])
     try:
         try:
@@ -44,7 +41,7 @@ def abvalidade():
         absences = Absence.query.filter_by(device_id=rjson['dvcid'],
                                            subject_id=rjson['subjid'],
                                            date=rjson['vdate']).all()
-        if absences[0].user_id==user.id:
+        if absences[0].user_id==userid:
             return jsonify({'Success': 'Preseça já registrada anteriormente'}), 201
         for row in absences:
             db.session.delete(row)

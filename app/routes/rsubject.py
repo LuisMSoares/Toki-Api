@@ -2,19 +2,17 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from app.db import Subject, Subjectur
 from app.db import bluep_db as db
-from app.routes import userauth
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 sapp = Blueprint('rsubject',__name__)
 
 
 @sapp.route('/register', methods=['POST'])
+@jwt_required
 def regsubject():
-    auth = request.authorization
-    user = userauth(auth.username,auth.password)
-    if not user:
-        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
+    userid = get_jwt_identity()
     rjson = request.json
-    subject = Subject(user_id=user.id,
+    subject = Subject(user_id=userid,
                       subname=rjson['sname'],
                       subgroup=rjson['sgroup'])
     try:
@@ -25,13 +23,12 @@ def regsubject():
         return jsonify({'Error': 'Ocorreu algum erro ao tentar realizar o cadastro!'}), 500
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
+
 @sapp.route('/user', methods=['GET'])
+@jwt_required
 def relationsub():
-    auth = request.authorization
-    user = userauth(auth.username,auth.password)
-    if not user:
-        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
-    rabsence = Subjectur.query.filter_by(user_id=user.id)
+    userid = get_jwt_identity()
+    rabsence = Subjectur.query.filter_by(user_id=userid)
     if rabsence.count() == 0:
         return jsonify({'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}), 404
     subids = [row.subj_id for row in rabsence]
@@ -41,13 +38,12 @@ def relationsub():
     data['values'] = values
     return jsonify(data), 200
 
+
 @sapp.route('/teacher', methods=['GET'])
+@jwt_required
 def listsubject():
-    auth = request.authorization
-    user = userauth(auth.username,auth.password)
-    if not user:
-        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
-    disci = Subject.query.filter_by(user_id=user.id).all()
+    userid = get_jwt_identity()
+    disci = Subject.query.filter_by(user_id=userid).all()
     values = [row.todict() for row in disci]
     if len(values) == 0:
         return jsonify({'Error':'Nenhuma disciplina cadastrada pelo usuario foi encontrada'}), 404

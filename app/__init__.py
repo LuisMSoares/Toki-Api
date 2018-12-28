@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager
 from app.db import bluep_db
 
 app = Flask(__name__)
@@ -10,6 +11,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@postgresql/projectdb'
 bluep_db.init_app(app)
+app.config['JWT_SECRET_KEY'] = 'The quick brown fox jumps over the lazy dog'
+jwt = JWTManager(app)
 
 
 
@@ -40,7 +43,7 @@ def not_found(error):
 
 with app.app_context():
     # remove this in production - start remove
-    # bluep_db.drop_all()
+    bluep_db.drop_all()
     print(' * Drop all tables!')
     # end remove
     bluep_db.create_all()

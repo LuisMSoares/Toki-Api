@@ -1,4 +1,5 @@
 from app.db import bluep_db as db
+from passlib.apps import custom_app_context as pwd_context
 
 
 class User(db.Model):
@@ -12,6 +13,12 @@ class User(db.Model):
 
     def __init__(self, username, password, enrolment, email):
         self.username = username
-        self.password = password
+        self.hash_password(password)
         self.enrolment = enrolment
         self.email = email
+
+    def hash_password(self, password):
+        self.password = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password) # return True or False
