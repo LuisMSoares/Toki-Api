@@ -40,7 +40,7 @@ def not_found(error):
 
 with app.app_context():
     # remove this in production - start remove
-    #bluep_db.drop_all()
+    # bluep_db.drop_all()
     print(' * Drop all tables!')
     # end remove
     bluep_db.create_all()
