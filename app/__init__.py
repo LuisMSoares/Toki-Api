@@ -10,16 +10,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@postgresql/projectdb'
 bluep_db.init_app(app)
-with app.app_context():
-    # remove this in production - start remove
-    from sqlalchemy.exc import OperationalError
-    try:
-        #bluep_db.drop_all()
-        print(' * Drop all tables!')
-    except OperationalError:
-        pass
-    # end remove
-    bluep_db.create_all()
+
 
 
 # Routes blueprints
@@ -43,3 +34,13 @@ app.register_blueprint(abvapp, url_prefix='/absence')
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'Error': 'Not found'}), 404
+
+
+# Create database tables
+
+with app.app_context():
+    # remove this in production - start remove
+    #bluep_db.drop_all()
+    print(' * Drop all tables!')
+    # end remove
+    bluep_db.create_all()
