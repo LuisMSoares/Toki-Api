@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.db import Absence, qtAbsence, Subjectur
 from app.db import bluep_db as db
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 abapp = Blueprint('rabsence',__name__)
 
@@ -21,7 +21,6 @@ def getabsences(subjid):
 @abapp.route('/all/<int:subjid>', methods=['GET'])
 @jwt_required
 def getallabsences(subjid):
-    subjectur = Absence.query.distinct(Absence.user_id).filter_by(subject_id=subjid)
     subjectur = Subjectur.query.filter_by(subj_id=subjid)
     if subjectur == None:
         return jsonify({'Error':'Nenhum discente relacionado a disciplina foi encontrado'}), 404

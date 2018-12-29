@@ -2,12 +2,13 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from app.db import Absence, qtAbsence, Subjectur
 from app.db import bluep_db as db
-from app.routes import userauth
+from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 abvapp = Blueprint('rvabsence',__name__)
 
 
 @abvapp.route('/validate', methods=['POST'])
+@jwt_required
 def abvalidade():
     userid = get_jwt_identity()
     rjson = request.json

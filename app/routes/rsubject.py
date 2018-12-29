@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from app.db import Subject, Subjectur
 from app.db import bluep_db as db
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 sapp = Blueprint('rsubject',__name__)
 
@@ -24,7 +24,7 @@ def regsubject():
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
 
-@sapp.route('/user', methods=['GET'])
+@sapp.route('/enrolled/all', methods=['GET'])
 @jwt_required
 def relationsub():
     userid = get_jwt_identity()
@@ -39,7 +39,7 @@ def relationsub():
     return jsonify(data), 200
 
 
-@sapp.route('/teacher', methods=['GET'])
+@sapp.route('/createdby/all', methods=['GET'])
 @jwt_required
 def listsubject():
     userid = get_jwt_identity()
