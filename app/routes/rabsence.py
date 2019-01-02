@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify
 from app.db import Absence, qtAbsence, Subjectur
-from app.db import bluep_db as db
 from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 abapp = Blueprint('rabsence',__name__)

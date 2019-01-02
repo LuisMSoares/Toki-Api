@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError
 from app.db import Subject, Subjectur
-from app.db import bluep_db as db
+from app.db import AddData
 from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 sapp = Blueprint('rsubject',__name__)
@@ -15,11 +15,7 @@ def regsubject():
     subject = Subject(user_id=userid,
                       subname=rjson['sname'],
                       subgroup=rjson['sgroup'])
-    try:
-        db.session.add(subject)
-        db.session.commit()
-    except IntegrityError:
-        db.session().rollback()
+    if not AddData(subject):
         return jsonify({'Error': 'Ocorreu algum erro ao tentar realizar o cadastro!'}), 500
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 

@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from sqlalchemy.exc import IntegrityError
 from app.db import User
-from app.db import bluep_db as db
+from app.db import AddData
 from passlib.apps import custom_app_context as pwd_context
 
 uapp = Blueprint('ruser',__name__)
@@ -15,11 +15,7 @@ def reguser():
                 password=rjson['passw'],
                 enrolment=rjson['enrol'],
                 email=rjson['email'])
-    try:
-        db.session.add(user)
-        db.session.commit()
-    except IntegrityError:
-        db.session().rollback()
+    if not AddData(user)
         return jsonify({'Error': 'Já existe um usuario cadastrado com esta matricula ou email!'}), 500
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
