@@ -1,32 +1,25 @@
 from flask import Blueprint, request, jsonify
 from app.db import Absence, qtAbsence, Subjectur
-from app.db import bluep_db as db
-from app.routes import userauth
+from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 abapp = Blueprint('rabsence',__name__)
 
 
-@abapp.route('/subject/absence/<int:subjid>', methods=['GET'])
+@abapp.route('/one/<int:subjid>', methods=['GET'])
+@jwt_required
 def getabsences(subjid):
-    auth = request.authorization
-    user = userauth(auth.username,auth.password)
-    if not user:
-        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401
+    userid = get_jwt_identity()
     qtaulas = qtAbsence.query.filter_by(subject_id=subjid).count()
-    qtdispo = Absence.query.filter_by(subject_id=subjid,user_id=user.id).count()
+    qtdispo = Absence.query.filter_by(subject_id=subjid,user_id=userid).count()
     data = {'subjid':subjid,
             'presencas':qtdispo,
             'faltas':qtaulas-qtdispo }
     return jsonify(data), 200
 
 
-@abapp.route('/subject/allabsence/<int:subjid>', methods=['GET'])
+@abapp.route('/all/<int:subjid>', methods=['GET'])
+@jwt_required
 def getallabsences(subjid):
-    auth = request.authorization
-    user = userauth(auth.username,auth.password)
-    if not user:
-        return jsonify({'Error':'Ocorreu algum erro ao tentar a autenticação'}), 401    
-    subjectur = Absence.query.distinct(Absence.user_id).filter_by(subject_id=subjid)
     subjectur = Subjectur.query.filter_by(subj_id=subjid)
     if subjectur == None:
         return jsonify({'Error':'Nenhum discente relacionado a disciplina foi encontrado'}), 404
