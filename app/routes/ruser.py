@@ -15,7 +15,7 @@ def reguser():
                 password=rjson['passw'],
                 enrolment=rjson['enrol'],
                 email=rjson['email'])
-    if not AddData(user)
+    if not AddData(user):
         return jsonify({'Error': 'Já existe um usuario cadastrado com esta matricula ou email!'}), 500
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
@@ -29,4 +29,4 @@ def loguser():
     if not user.verify_password(rjson['password']):
         return jsonify({'Error':'Senha informada incorreta!'}), 401  
     access_token = create_access_token(identity=user.id)
-    return jsonify({'access_token': access_token}), 200
+    return jsonify({'access_token': access_token, 'username':user.username}), 200
