@@ -7,7 +7,7 @@ class Subject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     subname = db.Column(db.String(80), nullable=False)
-    subgroup = db.Column(db.Integer, nullable=False)
+    subgroup = db.Column(db.String(80), nullable=False)
 
     def __init__(self, user_id, subname, subgroup):
         self.user_id = user_id
