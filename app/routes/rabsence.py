@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.db import Absence, qtAbsence, Subjectur
+from app.db import Absence, qtAbsence, Subjectur, User
 from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 abapp = Blueprint('rabsence',__name__)
@@ -28,7 +28,9 @@ def getallabsences(subjid):
     for sur in subjectur:
         dic = {}
         qtdispo = Absence.query.filter_by(subject_id=subjid, user_id=sur.user_id)
-        dic[str(sur.user_id)] = [row.date.strftime("%Y-%m-%d") for row in qtdispo]
+        user = User.query.filter_by(id=sur.user_id).first()
+        dic['username'] = f'{user.username} - {user.enrolment}'
+        dic['dates'] = [row.date.strftime("%Y-%m-%d") for row in qtdispo]
         dic['presencas'] = qtdispo.count() 
         dic['faltas'] = qtaulas - qtdispo.count()
         data.append(dic)
