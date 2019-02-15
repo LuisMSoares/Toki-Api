@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify
-from sqlalchemy.exc import IntegrityError
 from app.db import Absence, qtAbsence, Subjectur
 from app.db import AddData, DeleteData
 from flask_jwt_extended import ( jwt_required, get_jwt_identity )
@@ -29,9 +28,9 @@ def abvalidade():
         absences = Absence.query.filter_by(device_id=rjson['dvcid'],
                                            subject_id=rjson['subjid'],
                                            date=rjson['vdate']).all()
-        if absences[0].user_id==userid:
-            return jsonify({'Success': 'Preseça já registrada anteriormente'}), 201
+        if absences[0].user_id == userid:
+            return jsonify({'success': 'Preseça já registrada anteriormente'}), 200
         for row in absences:
             DeleteData(row)
-        return jsonify({'Fraud': 'Dispositivos duplicados detectados, atribuindo falta a ambos os usuarios'}), 201
-    return jsonify({'Success': 'Presença computada com sucesso'}), 201
+        return jsonify({'success': 'Dispositivos duplicados detectados, atribuindo falta a ambos os usuarios'}), 200
+    return jsonify({'success': 'Presença computada com sucesso'}), 201
