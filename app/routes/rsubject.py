@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError
-from app.db import Subject, Subjectur
+from app.db import Subject, Subjectur, qtAbsence, Absence
 from app.db import AddData
 from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
@@ -29,10 +29,18 @@ def relationsub():
         return jsonify({'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}), 404
     subids = [row.subj_id for row in rabsence]
     disci = Subject.query.filter(Subject.id.in_(subids))
-    values = [row.todict() for row in disci]
-    data = {}
-    data['values'] = values
-    return jsonify(data), 200
+    values = []
+    for row in disci:
+        r = {}
+        qtaulas = qtAbsence.query.filter_by(subject_id=row.id).count()
+        qtdispo = Absence.query.filter_by(subject_id=row.id,user_id=userid).count()
+
+        r['absence'] = qtaulas-qtdispo
+        r['presence'] = qtdispo
+        r['name'] = f'{row.subname} - {row.subgroup}'
+
+        values.append(r)
+    return jsonify({'values': values}), 200
 
 
 @sapp.route('/createdby/all', methods=['GET'])

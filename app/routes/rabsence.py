@@ -4,7 +4,7 @@ from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 abapp = Blueprint('rabsence',__name__)
 
-
+#not used
 @abapp.route('/one/<int:subjid>', methods=['GET'])
 @jwt_required
 def getabsences(subjid):
