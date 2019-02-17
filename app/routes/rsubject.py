@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import asc
 from app.db import Subject, Subjectur, qtAbsence, Absence
-from app.db import AddData
+from app.db import AddData, bluep_db
 from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 
 sapp = Blueprint('rsubject',__name__)
@@ -20,6 +21,19 @@ def regsubject():
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
 
+@sapp.route('/edit', methods=['POST'])
+@jwt_required
+def editsubject():
+    userid, rjson = get_jwt_identity(), request.json
+
+    stmt = Subject.query.filter_by(id=rjson['sid']).update(dict(user_id=userid,
+                      subname=rjson['sname'],
+                      subgroup=rjson['sgroup']))
+    bluep_db.session.commit()
+
+    return jsonify({'Success': 'Edição realizada com sucesso'}), 201
+
+
 @sapp.route('/enrolled/all', methods=['GET'])
 @jwt_required
 def relationsub():
@@ -28,7 +42,7 @@ def relationsub():
     if rabsence.count() == 0:
         return jsonify({'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}), 404
     subids = [row.subj_id for row in rabsence]
-    disci = Subject.query.filter(Subject.id.in_(subids))
+    disci = Subject.query.filter(Subject.id.in_(subids)).order_by(asc(Subject.id))
     values = []
     for row in disci:
         r = {}
@@ -47,7 +61,7 @@ def relationsub():
 @jwt_required
 def listsubject():
     userid = get_jwt_identity()
-    disci = Subject.query.filter_by(user_id=userid).all()
+    disci = Subject.query.filter_by(user_id=userid).order_by(asc(Subject.id)).all()
     values = [row.todict() for row in disci]
     if len(values) == 0:
         return jsonify({'Error':'Nenhuma disciplina cadastrada pelo usuario foi encontrada'}), 404
