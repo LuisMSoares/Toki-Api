@@ -16,7 +16,7 @@ def regsubject():
                       subname=rjson['sname'],
                       subgroup=rjson['sgroup'])
     if not AddData(subject):
-        return jsonify({'Error': 'Ocorreu algum erro ao tentar realizar o cadastro!'}), 500
+        return jsonify({'Error': 'Preencha todos os campos corretamente!'}), 500
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
 
