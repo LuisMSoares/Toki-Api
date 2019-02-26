@@ -20,17 +20,19 @@ jwt = JWTManager(app)
 # Routes blueprints
 
 #  user route
-from app.routes.ruser import uapp
+from app.routes.user import uapp
 app.register_blueprint(uapp, url_prefix='/user')
+
+# Refactoring in progress
 #  subject route
-from app.routes.rsubject import sapp
-app.register_blueprint(sapp, url_prefix='/subject')
+#from app.routes.rsubject import sapp
+#app.register_blueprint(sapp, url_prefix='/subject')
 #  absence route
-from app.routes.rabsence import abapp
-app.register_blueprint(abapp, url_prefix='/absence')
+#from app.routes.rabsence import abapp
+#app.register_blueprint(abapp, url_prefix='/absence')
 #  validade absence route
-from app.routes.rvabsence import abvapp
-app.register_blueprint(abvapp, url_prefix='/absence')
+#from app.routes.rvabsence import abvapp
+#app.register_blueprint(abvapp, url_prefix='/absence')
 
 
 # Status code routes
@@ -44,7 +46,7 @@ def not_found(error):
 
 with app.app_context():
     # remove this in production - start remove
-    #bluep_db.drop_all()
-    #print(' * Drop all tables!')
+    bluep_db.drop_all()
+    print(' * Drop all tables!')
     # end remove
     bluep_db.create_all()

@@ -1,10 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
+
 bluep_db = SQLAlchemy()
 
-from app.db.user import User
-from app.db.subject import Subject, Subuser
-from app.db.absence import Absence, Presence
+
+from app.db.model import User, Subject, Subuser, Absence, Presence
 
 
 def AddData(objdata):
