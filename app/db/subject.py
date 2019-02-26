@@ -1,37 +1,33 @@
 from app.db import bluep_db as db
-from app.db import User
+from app.db import User, Absence, Presence
+
 
 class Subject(db.Model):
-    __tablename__ = 'disciplina'
-
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
-    subname = db.Column(db.String(80), nullable=False)
-    subgroup = db.Column(db.String(80), nullable=False)
+    sub_name = db.Column(db.String, nullable=False)
+    sub_group = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, user_id, subname, subgroup):
-        self.user_id = user_id
-        self.subname = subname
-        self.subgroup = subgroup
-    
-    def todict(self):
-        keys = ['id', 'user_id', 'subname', 'subgroup']
-        values = [self.id, self.user_id, self.subname, self.subgroup]
-        return dict(zip(keys,values))
+    user_associated = db.relationship('Subuser', backref='subj_associate')
+    presence_count = db.relationship('Presence', backref='subject_info')
+
+    def __init__(self, sub_name, sub_group, creator):
+        self.sub_name = user_id
+        self.sub_group = subname
+        self.creator = creator
 
 
-# guarda todas as relações de usuarios com uma disciplina
-class Subjectur(db.Model):
-    __tablename__ = 'ur_disciplina'
-
+class Subuser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
-    subj_id = db.Column(db.Integer, db.ForeignKey(Subject.id), nullable=False)
+    sub_id = db.Column(db.Integer, db.ForeignKey('subject.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self,user_id,subj_id):
-        self.user_id = user_id
-        self.subj_id = subj_id
+    absences = db.relationship('Absence', backref='user_absence')
+
+    def __init__(self, subj_associate, user_associate):
+        self.subj_associate = subj_associate
+        self.user_associate = user_associate
 
     __table_args__ = (
-        db.Index('only_subjectur', user_id, subj_id, unique=True),
+        db.Index('only_subuser', sub_id, user_id, unique=True),
     )

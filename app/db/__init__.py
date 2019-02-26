@@ -3,8 +3,8 @@ from sqlalchemy.exc import IntegrityError
 bluep_db = SQLAlchemy()
 
 from app.db.user import User
-from app.db.subject import Subject, Subjectur
-from app.db.absence import Absence, qtAbsence
+from app.db.subject import Subject, Subuser
+from app.db.absence import Absence, Presence
 
 
 def AddData(objdata):
