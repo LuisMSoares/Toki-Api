@@ -50,10 +50,6 @@ class Subuser(db.Model):
 
     absences = db.relationship('Absence', backref='user_absence')
 
-    def __init__(self, subj_associate, user_associate):
-        self.subj_associate = subj_associate
-        self.user_associate = user_associate
-
     __table_args__ = (
         db.Index('only_subuser', sub_id, user_id, unique=True),
     )
@@ -65,13 +61,14 @@ class Absence(db.Model):
     device_id = db.Column(db.String(80), nullable=False)
     usubj_id = db.Column(db.Integer, db.ForeignKey('subuser.id'))
 
-    def __init__(self, date, user_absence):
-        year, month, day = vdate.split('-')# vdate = year-month-day -> 2018-12-14
+    def __init__(self, date, user_absence, device_id):
+        year, month, day = date.split('-')# date = year-month-day -> 2018-12-14
         self.date = datetime.date(int(year), int(month), int(day))
         self.user_absence = user_absence
+        self.device_id = device_id
     
-    def PresenceCount(self, subject):
-        return Presence(subject_info=subject ,date=self.date)
+    def PresenceCount(self, sub_id):
+        return Presence(sub_id=sub_id ,date=self.date)
     
     __table_args__ = (
         db.Index('duplicated_device', usubj_id, device_id, date, unique=True),

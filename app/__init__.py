@@ -28,11 +28,9 @@ app.register_blueprint(sapp, url_prefix='/subject')
 #  absence route
 from app.routes.absence import abapp
 app.register_blueprint(abapp, url_prefix='/absence')
-
-# Refactoring in progress
 #  validade absence route
-#from app.routes.rvabsence import abvapp
-#app.register_blueprint(abvapp, url_prefix='/absence')
+from app.routes.vabsence import abvapp
+app.register_blueprint(abvapp, url_prefix='/absence')
 
 
 # Status code routes
