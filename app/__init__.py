@@ -25,11 +25,11 @@ app.register_blueprint(uapp, url_prefix='/user')
 #  subject route
 from app.routes.subject import sapp
 app.register_blueprint(sapp, url_prefix='/subject')
+#  absence route
+from app.routes.absence import abapp
+app.register_blueprint(abapp, url_prefix='/absence')
 
 # Refactoring in progress
-#  absence route
-#from app.routes.rabsence import abapp
-#app.register_blueprint(abapp, url_prefix='/absence')
 #  validade absence route
 #from app.routes.rvabsence import abvapp
 #app.register_blueprint(abvapp, url_prefix='/absence')
