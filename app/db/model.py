@@ -38,8 +38,8 @@ class Subject(db.Model):
     presence_count = db.relationship('Presence', backref='subject_info')
 
     def __init__(self, sub_name, sub_group, creator):
-        self.sub_name = user_id
-        self.sub_group = subname
+        self.sub_name = sub_name
+        self.sub_group = sub_group
         self.creator = creator
 
 

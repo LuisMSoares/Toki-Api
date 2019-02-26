@@ -22,11 +22,11 @@ jwt = JWTManager(app)
 #  user route
 from app.routes.user import uapp
 app.register_blueprint(uapp, url_prefix='/user')
+#  subject route
+from app.routes.subject import sapp
+app.register_blueprint(sapp, url_prefix='/subject')
 
 # Refactoring in progress
-#  subject route
-#from app.routes.rsubject import sapp
-#app.register_blueprint(sapp, url_prefix='/subject')
 #  absence route
 #from app.routes.rabsence import abapp
 #app.register_blueprint(abapp, url_prefix='/absence')

@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from sqlalchemy.exc import IntegrityError
-from app.db import User, AddData
+from app.db import *
 from app.routes import json_verification
 
 uapp = Blueprint('ruser',__name__)

@@ -11,7 +11,7 @@ def AddData(objdata):
     try:
         bluep_db.session.add(objdata)
         bluep_db.session.commit()
-    except IntegrityError:
+    except:
         bluep_db.session().rollback()
         return False
     return True
