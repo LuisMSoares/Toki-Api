@@ -60,18 +60,20 @@ class Absence(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     device_id = db.Column(db.String(80), nullable=False)
     usubj_id = db.Column(db.Integer, db.ForeignKey('subuser.id'))
+    dup_security = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, date, user_absence, device_id):
+    def __init__(self, date, user_absence, device_id, dup_security):
         year, month, day = date.split('-')# date = year-month-day -> 2018-12-14
         self.date = datetime.date(int(year), int(month), int(day))
         self.user_absence = user_absence
         self.device_id = device_id
+        self.dup_security = dup_security
     
     def PresenceCount(self, sub_id):
         return Presence(sub_id=sub_id ,date=self.date)
     
     __table_args__ = (
-        db.Index('duplicated_device', usubj_id, device_id, date, unique=True),
+        db.Index('duplicated_device', dup_security, device_id, date, unique=True),
         db.Index('already_registred', usubj_id, date, unique=True),
     )
 

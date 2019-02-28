@@ -23,13 +23,14 @@ def abvalidade():
 
     absence  = Absence(date = rjson['vdate'],
                        device_id = rjson['dvcid'], 
-                       user_absence = subuser
+                       user_absence = subuser,
+                       dup_security = rjson['subjid']
     )
     AddData( absence.PresenceCount( rjson['subjid'] ) )
 
     if not AddData(absence):
         absences = Absence.query.filter_by(device_id=rjson['dvcid'],
-                                           user_absence=subuser,
+                                           dup_security = rjson['subjid'],
                                            date=rjson['vdate']).all()
         if absences[0].user_absence.user_id == get_jwt_identity():
             return jsonify({'success': 'Preseça já registrada anteriormente'}), 200
