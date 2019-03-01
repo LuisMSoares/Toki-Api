@@ -45,6 +45,7 @@ class Subject(db.Model):
 
 class Subuser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    is_active = db.Column(db.Boolean, default=True)
     sub_id = db.Column(db.Integer, db.ForeignKey('subject.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 

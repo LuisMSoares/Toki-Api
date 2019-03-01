@@ -45,6 +45,21 @@ def editsubject():
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
 
+@sapp.route('/association/disable', methods=['PUT'])
+@jwt_required
+def subjdisable():
+    keys, rjson = ['suid'], request.json
+    if not json_verification(json_data=rjson, keys=keys):
+        return jsonify({'Error': 'Invalid json request data'}), 400
+
+    subuser = Subuser.query.filter_by(
+        id=rjson['suid'], user_id=get_jwt_identity()).first()
+    subuser.is_active = False
+    AddData(subuser)
+
+    return jsonify({'Success': 'Disciplina desativada com sucesso'}), 200
+
+
 @sapp.route('/enrolled/all', methods=['GET'])
 @jwt_required
 def relationsub():
@@ -55,14 +70,16 @@ def relationsub():
         return jsonify({'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}), 404
 
     for sjuser in my_associations:
-        v, qtpresence = {}, len(sjuser.subj_associate.presence_count)
-        qtabsence = len(sjuser.absences)
+        if sjuser.is_active:
+            v, qtpresence = {}, len(sjuser.subj_associate.presence_count)
+            qtabsence = len(sjuser.absences)
 
-        v['absence']  = qtpresence - qtabsence
-        v['presence'] = qtabsence
-        v['name']     = sjuser.subj_associate.sub_name
+            v['suid']     = sjuser.id
+            v['absence']  = qtpresence - qtabsence
+            v['presence'] = qtabsence
+            v['name']     = sjuser.subj_associate.sub_name
 
-        values.append(v)
+            values.append(v)
 
     return jsonify({'values': values}), 200
 

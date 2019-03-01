@@ -19,7 +19,8 @@ def abvalidade():
     if not AddData(subuser):
         subuser = Subuser.query.filter_by(
             sub_id=rjson['subjid'], user_id=get_jwt_identity()).first()
-        print('Disciplina já relacionada')
+        subuser.is_active = True
+        AddData(subuser)
 
     absence  = Absence(date = rjson['vdate'],
                        device_id = rjson['dvcid'], 
