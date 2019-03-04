@@ -34,8 +34,8 @@ class Subject(db.Model):
     sub_group = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    user_associated = db.relationship('Subuser', backref='subj_associate')
-    presence_count = db.relationship('Presence', backref='subject_info')
+    user_associated = db.relationship('Subuser', backref='subj_associate', passive_deletes=True)
+    presence_count = db.relationship('Presence', backref='subject_info', passive_deletes=True)
 
     def __init__(self, sub_name, sub_group, creator):
         self.sub_name = sub_name
@@ -46,10 +46,10 @@ class Subject(db.Model):
 class Subuser(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     is_active = db.Column(db.Boolean, default=True)
-    sub_id = db.Column(db.Integer, db.ForeignKey('subject.id'))
+    sub_id = db.Column(db.Integer, db.ForeignKey('subject.id', ondelete="CASCADE"))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    absences = db.relationship('Absence', backref='user_absence')
+    absences = db.relationship('Absence', backref='user_absence', passive_deletes=True)
 
     __table_args__ = (
         db.Index('only_subuser', sub_id, user_id, unique=True),
@@ -60,7 +60,7 @@ class Absence(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     device_id = db.Column(db.String(80), nullable=False)
-    usubj_id = db.Column(db.Integer, db.ForeignKey('subuser.id'))
+    usubj_id = db.Column(db.Integer, db.ForeignKey('subuser.id', ondelete="CASCADE"))
     dup_security = db.Column(db.Integer, nullable=False)
 
     def __init__(self, date, user_absence, device_id, dup_security):
@@ -81,7 +81,7 @@ class Absence(db.Model):
 
 class Presence(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    sub_id = db.Column(db.Integer, db.ForeignKey('subject.id'))
+    sub_id = db.Column(db.Integer, db.ForeignKey('subject.id', ondelete="CASCADE"))
     date = db.Column(db.DateTime, nullable=False)
 
     __table_args__ = (

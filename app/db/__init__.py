@@ -18,5 +18,10 @@ def AddData(objdata):
 
 
 def DeleteData(objdata):
-    bluep_db.session.delete(objdata)
-    bluep_db.session.commit()
+    try:
+        bluep_db.session.delete(objdata)
+        bluep_db.session.commit()
+    except:
+        bluep_db.session().rollback()
+        return False
+    return True

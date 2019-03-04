@@ -45,6 +45,20 @@ def editsubject():
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
 
+@sapp.route('/delete', methods=['DELETE'])
+@jwt_required
+def deletesubject():
+    keys, rjson = ['sid'], request.json
+    if not json_verification(json_data=rjson, keys=keys):
+        return jsonify({'Error': 'Invalid json request data'}), 400
+
+    subj = Subject.query.filter_by(id=rjson['sid']).first()
+
+    if not DeleteData(subj):
+        return jsonify({'Error': 'Ocorreu algum erro ao deletar a disciplina'}), 400
+    return jsonify({'Success': 'Disciplina removida com sucesso'}), 200
+
+
 @sapp.route('/association/disable', methods=['PUT'])
 @jwt_required
 def subjdisable():
