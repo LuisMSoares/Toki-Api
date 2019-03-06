@@ -65,11 +65,13 @@ def subjdisable():
     keys, rjson = ['suid'], request.json
     if not json_verification(json_data=rjson, keys=keys):
         return jsonify({'Error': 'Invalid json request data'}), 400
-
-    subuser = Subuser.query.filter_by(
-        id=rjson['suid'], user_id=get_jwt_identity()).first()
-    subuser.is_active = False
-    AddData(subuser)
+    try:
+        subuser = Subuser.query.filter_by(
+            id=rjson['suid'], user_id=get_jwt_identity()).first()
+        subuser.is_active = False
+        AddData(subuser)
+    except:
+        pass
 
     return jsonify({'Success': 'Disciplina desativada com sucesso'}), 200
 
