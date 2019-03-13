@@ -45,14 +45,14 @@ def editsubject():
     return jsonify({'Success': 'Registro realizado com sucesso'}), 201
 
 
-@sapp.route('/delete', methods=['DELETE'])
+@sapp.route('/delete/<int:subject_id>', methods=['DELETE'])
 @jwt_required
-def deletesubject():
+def deletesubject(subject_id):
     keys, rjson = ['sid'], request.json
-    if not json_verification(json_data=rjson, keys=keys):
-        return jsonify({'Error': 'Invalid json request data'}), 400
+    print('Sid: {}'.format(subject_id))
+    print('keys: {}'.format(keys))
 
-    subj = Subject.query.filter_by(id=rjson['sid']).first()
+    subj = Subject.query.filter_by(id=subject_id).first()
 
     if not DeleteData(subj):
         return jsonify({'Error': 'Ocorreu algum erro ao deletar a disciplina'}), 400
@@ -93,7 +93,8 @@ def relationsub():
             v['suid']     = sjuser.id
             v['absence']  = qtpresence - qtabsence
             v['presence'] = qtabsence
-            v['name']     = sjuser.subj_associate.sub_name
+            v['subname']  = sjuser.subj_associate.sub_name
+            v['subgroup'] = sjuser.subj_associate.sub_group
 
             values.append(v)
 
