@@ -30,12 +30,15 @@ def abvalidade():
     AddData( absence.PresenceCount( rjson['subjid'] ) )
 
     if not AddData(absence):
-        absences = Absence.query.filter_by(device_id=rjson['dvcid'],
-                                           dup_security = rjson['subjid'],
-                                           date=rjson['vdate']).all()
-        if absences[0].user_absence.user_id == get_jwt_identity():
-            return jsonify({'success': 'Preseça já registrada anteriormente'}), 200
-        for row in absences:
-            DeleteData(row)
-        return jsonify({'success': 'Dispositivos duplicados detectados, atribuindo falta a ambos os usuarios'}), 200
+        try:
+            absences = Absence.query.filter_by(device_id=rjson['dvcid'],
+                                            dup_security = rjson['subjid'],
+                                            date=rjson['vdate']).all()
+            if absences[0].user_absence.user_id == get_jwt_identity():
+                return jsonify({'success': 'Preseça já registrada anteriormente'}), 200
+            for row in absences:
+                DeleteData(row)
+            return jsonify({'success': 'Dispositivos duplicados detectados, atribuindo falta a ambos os usuarios'}), 200
+        except IndexError:
+            return jsonify({'success': 'Preseça já registrada anteriormente por outro dispositivo'}), 200
     return jsonify({'success': 'Presença computada com sucesso'}), 201
