@@ -20,6 +20,8 @@ services:
 
   flask:
     restart: on-failure
+    environment:
+     - DATABASE_URL=postgresql://admin:admin@postgresql/projectdb
     build: .
     container_name: flask
     volumes: 

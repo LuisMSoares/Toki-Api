@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from app.db import bluep_db
+import os
 
 app = Flask(__name__)
 
@@ -9,7 +10,7 @@ app = Flask(__name__)
 # Database config
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@postgresql/projectdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 bluep_db.init_app(app)
 app.config['JWT_SECRET_KEY'] = 'The quick brown fox jumps over the lazy dog'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
