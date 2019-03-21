@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.db import *
 from flask_jwt_extended import ( jwt_required, get_jwt_identity )
+from sqlalchemy.orm import load_only
 
 abapp = Blueprint('rabsence',__name__)
 
@@ -11,7 +12,9 @@ def getallabsences(subjid):
     ab_users = Subuser.query.filter_by(sub_id=subjid).all()
     if len(ab_users) == 0:
         return jsonify({'Error':'Nenhum discente relacionado a disciplina foi encontrado'}), 404
-    qt_presence = Presence.query.filter_by(sub_id=subjid).count()
+    presence = Presence.query.filter_by(sub_id=subjid).options(load_only('date'))
+    date_presence = [row.date.strftime("%Y-%m-%d") for row in presence]
+    qt_presence = len(date_presence)
 
     values = []
     for ab_user in ab_users:
@@ -21,24 +24,18 @@ def getallabsences(subjid):
         v['username']  = f'{user.username} - {user.enrolment}'
         v['presencas'] = qt_absence 
         v['faltas']    = qt_presence - qt_absence
-        #v['dates']     = [row.date.strftime("%Y-%m-%d") for row in qtdispo]
 
         values.append(v)
 
-    return jsonify({'values':values}), 200  
+    return jsonify({'dates': date_presence, 'values':values}), 200  
 
 
-#-not-used-----------------------------------------------------------------------
-@abapp.route('/one/<int:subjid>', methods=['GET'])
+@abapp.route('/one/<int:subjId>', methods=['GET'])
 @jwt_required
-def getabsences(subjid):
-    user = User.query.filter_by(id=get_jwt_identity()).first()
-
+def getabsences(subjId):
     userid = get_jwt_identity()
-    qtaulas = qtAbsence.query.filter_by(subject_id=subjid).count()
-    qtdispo = Absence.query.filter_by(subject_id=subjid,user_id=userid).count()
-    data = {'subjid':subjid,
-            'presencas':qtdispo,
-            'faltas':qtaulas-qtdispo }
-    return jsonify(data), 200
+    subuResult = Subuser.query.filter_by(user_id=userid, sub_id=subjId).first()
+    date_presence = [row.date.strftime("%Y-%m-%d") for row in subuResult.absences]
+    
+    return jsonify({'dates': date_presence}), 200  
 
