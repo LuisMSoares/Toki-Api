@@ -89,10 +89,13 @@ def relationsub():
         if sjuser.is_active:
             v, qtpresence = {}, len(sjuser.subj_associate.presence_count)
             qtabsence = len(sjuser.absences)
-
+            # user data
             v['suid']     = sjuser.id
+            v['userid']   = user.id
             v['absence']  = qtpresence - qtabsence
             v['presence'] = qtabsence
+            # subject data
+            v['subid']    = sjuser.subj_associate.id
             v['subname']  = sjuser.subj_associate.sub_name
             v['subgroup'] = sjuser.subj_associate.sub_group
 

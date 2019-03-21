@@ -21,21 +21,29 @@ def getallabsences(subjid):
         v = {}
         qt_absence, user = len(ab_user.absences), ab_user.user_associate
 
+        v['userid']    = user.id
         v['username']  = f'{user.username} - {user.enrolment}'
         v['presencas'] = qt_absence 
         v['faltas']    = qt_presence - qt_absence
 
         values.append(v)
 
-    return jsonify({'dates': date_presence, 'values':values}), 200  
+    return jsonify({'dates': date_presence, 'values':values}), 200
 
 
-@abapp.route('/one/<int:subjId>', methods=['GET'])
+@abapp.route('/one/subjectId=<int:subjId>&userid=<int:userId>', methods=['GET'])
 @jwt_required
-def getabsences(subjId):
-    userid = get_jwt_identity()
-    subuResult = Subuser.query.filter_by(user_id=userid, sub_id=subjId).first()
+def getabsences(subjId, userId):
+    subuResult = Subuser.query.filter_by(user_id=userId, sub_id=subjId).first()
     date_presence = [row.date.strftime("%Y-%m-%d") for row in subuResult.absences]
     
-    return jsonify({'dates': date_presence}), 200  
+    return jsonify({'dates': date_presence}), 200
 
+
+@abapp.route('/dates/<int:subjId>', methods=['GET'])
+@jwt_required
+def getPresenceDates(subjId):
+    presence = Presence.query.filter_by(sub_id=subjId).options(load_only('date'))
+    date_presence = [row.date.strftime("%Y-%m-%d") for row in presence]
+
+    return jsonify({'dates': date_presence}), 200
