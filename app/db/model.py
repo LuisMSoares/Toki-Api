@@ -49,7 +49,7 @@ class Subuser(db.Model):
     sub_id = db.Column(db.Integer, db.ForeignKey('subject.id', ondelete="CASCADE"))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    absences = db.relationship('Absence', backref='user_absence', passive_deletes=True)
+    absences = db.relationship('Absence', backref='user_absence', passive_deletes=True, order_by='Absence.date')
 
     __table_args__ = (
         db.Index('only_subuser', sub_id, user_id, unique=True),

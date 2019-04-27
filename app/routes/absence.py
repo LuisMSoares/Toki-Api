@@ -35,9 +35,11 @@ def getallabsences(subjid):
 @jwt_required
 def getabsences(subjId, userId):
     subuResult = Subuser.query.filter_by(user_id=userId, sub_id=subjId).first()
-    date_presence = [row.date.strftime("%Y-%m-%d") for row in subuResult.absences]
+    absences = subuResult.absences
+    date_presence = [row.date.strftime("%Y-%m-%d") for row in absences]
+    current_date = absences[-1].date.strftime("%Y-%m-%d")
     
-    return jsonify({'dates': date_presence}), 200
+    return jsonify({'current': current_date, 'dates': date_presence}), 200
 
 
 @abapp.route('/dates/<int:subjId>', methods=['GET'])

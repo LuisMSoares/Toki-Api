@@ -29,28 +29,36 @@ def regsubject():
 @sapp.route('/edit', methods=['POST'])
 @jwt_required
 def editsubject():
-    keys, rjson = ['sname','sgroup','sid'], request.json
+    keys, rjson = ['sname','sgroup','sid','upass'], request.json
     if not json_verification(json_data=rjson, keys=keys):
         return jsonify({'Error': 'Invalid json request data'}), 400
 
+    user = User.query.filter_by(id=get_jwt_identity()).first()
+    if not user.verify_password(rjson['upass']):
+        return jsonify({'Error': 'Senha informada incorreta!'}), 401
+
     subject = Subject.query.filter_by(id=rjson['sid']).first()
     if subject == None:
-        return jsonify({'Success': 'Registro não encontrado'}), 404
+        return jsonify({'Error': 'Registro não encontrado'}), 404
     
     subject.sub_name  = rjson['sname']
     subject.sub_group = rjson['sgroup']
 
     if not AddData(subject):
         return jsonify({'Error': 'Preencha todos os campos corretamente!'}), 500
-    return jsonify({'Success': 'Registro realizado com sucesso'}), 201
+    return jsonify({'Success': 'Registro realizado com sucesso'}), 200
 
 
-@sapp.route('/delete/<int:subject_id>', methods=['DELETE'])
+@sapp.route('/delete/<int:subject_id>', methods=['POST'])
 @jwt_required
 def deletesubject(subject_id):
-    keys, rjson = ['sid'], request.json
-    print('Sid: {}'.format(subject_id))
-    print('keys: {}'.format(keys))
+    keys, rjson = ['upass'], request.json
+    if not json_verification(json_data=rjson, keys=keys):
+        return jsonify({'Error': 'Invalid json request data'}), 400
+
+    user = User.query.filter_by(id=get_jwt_identity()).first()
+    if not user.verify_password(rjson['upass']):
+        return jsonify({'Error': 'Senha informada incorreta!'}), 401
 
     subj = Subject.query.filter_by(id=subject_id).first()
 
