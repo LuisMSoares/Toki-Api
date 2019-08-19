@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.db import *
 from flask_jwt_extended import ( jwt_required, get_jwt_identity )
 from sqlalchemy.orm import load_only
+from datetime import datetime
 
 abapp = Blueprint('rabsence',__name__)
 
@@ -37,8 +38,12 @@ def getallabsences(subjid):
 def getabsences(subjId, userId):
     subuResult = Subuser.query.filter_by(user_id=userId, sub_id=subjId).first()
     absences = subuResult.absences
-    date_presence = [row.date.strftime("%Y-%m-%d") for row in absences]
-    current_date = absences[-1].date.strftime("%Y-%m-%d")
+    if absences:
+        date_presence = [row.date.strftime("%Y-%m-%d") for row in absences]
+        current_date = absences[-1].date.strftime("%Y-%m-%d")
+    else:
+        date_presence = []
+        current_date = datetime.now().strftime("%Y-%m-%d")
     
     return jsonify({'current': current_date, 'dates': date_presence}), 200
 
