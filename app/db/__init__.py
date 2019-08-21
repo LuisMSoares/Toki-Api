@@ -1,9 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
 
-bluep_db = SQLAlchemy()
+db = SQLAlchemy()
 
-
-from app.db.model import User, Subject, Subuser, Absence, Presence
+from app.db.model import *
 
 
 def AddData(objdata):

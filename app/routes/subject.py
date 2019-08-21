@@ -8,7 +8,7 @@ from app.routes import json_verification
 sapp = Blueprint('rsubject',__name__)
 
 
-@sapp.route('/register', methods=['POST'])
+""" @sapp.route('/register', methods=['POST'])
 @jwt_required
 def regsubject():
     keys, rjson = ['sname','sgroup'], request.json
@@ -127,4 +127,4 @@ def listsubject():
 
         values.append(v)
     
-    return jsonify({'values': values}), 200
+    return jsonify({'values': values}), 200 """

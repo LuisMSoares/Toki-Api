@@ -6,7 +6,7 @@ from app.routes import json_verification
 abvapp = Blueprint('rvabsence',__name__)
 
 
-@abvapp.route('/validate', methods=['POST'])
+""" @abvapp.route('/validate', methods=['POST'])
 @jwt_required
 def abvalidade():
     keys, rjson = ['subjid','vdate','dvcid'], request.json
@@ -42,3 +42,4 @@ def abvalidade():
         except IndexError:
             return jsonify({'success': 'Preseça já registrada anteriormente por outro dispositivo'}), 200
     return jsonify({'success': 'Presença computada com sucesso'}), 201
+ """

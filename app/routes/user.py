@@ -7,7 +7,7 @@ from app.routes import json_verification
 uapp = Blueprint('ruser',__name__)
 
 
-@uapp.route('/register', methods=['POST'])
+""" @uapp.route('/register', methods=['POST'])
 def reguser():
     keys, rjson = ['uname','passw','enrol','email'], request.json
     if not json_verification(json_data=rjson, keys=keys):
@@ -35,4 +35,4 @@ def loguser():
     if not user.verify_password(rjson['password']):
         return jsonify({'Error':'Senha informada incorreta!'}), 401  
     access_token = create_access_token(identity=user.id)
-    return jsonify({'access_token': access_token, 'username':user.username}), 200
+    return jsonify({'access_token': access_token, 'username':user.username}), 200 """
