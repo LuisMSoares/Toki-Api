@@ -3,7 +3,8 @@ from flask_migrate import Migrate
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
-
+from os import environ
+from app.db import db
 
 app = Flask(__name__)
 
