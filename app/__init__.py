@@ -10,7 +10,7 @@ app = Flask(__name__)
 # Database config
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL','sqlite:///foo.db')
 bluep_db.init_app(app)
 app.config['JWT_SECRET_KEY'] = 'The quick brown fox jumps over the lazy dog'
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
