@@ -5,7 +5,7 @@ from datetime import datetime
 from app.db import SubuserModel, PresenceModel, AddData
 
 
-class UserResource(Resource):
+class AbsenceResource(Resource):
     @jwt_required
     def get(self):
         if request.args.get('presence', '0') == '1':
@@ -14,6 +14,7 @@ class UserResource(Resource):
             return self.getallabsences(int(request.args.get('subjid', 0)))
         if request.args.get('one', '0') == '1':
             return self.getabsences(int(request.args.get('subjid', 0)), int(request.args.get('userId', 0)))
+        return {'message': 'Codigo da disciplina e/ou do usuário não encontrado!'}, 404
 
     def getPresenceDates(self, subjId):
         presence = PresenceModel.query.filter_by(sub_id=subjId).options(load_only('date'))

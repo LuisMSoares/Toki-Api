@@ -3,10 +3,10 @@ from flask_restful import Resource, request
 from app.db import SubuserModel, AbsenceModel, AddData, DeleteData
 
 
-class OwnerSubjectResource(Resource):
+class ValidateAbsenceResource(Resource):
     #json validator: {'subjid':type('string'), 'vdate':type('string'), 'dvcid':type('int')}
     @jwt_required
-    def get(self):
+    def post(self):
         subuser = SubuserModel(sub_id = request.json['subjid'],
                         user_id = get_jwt_identity())
         if not AddData(subuser):

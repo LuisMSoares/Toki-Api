@@ -4,6 +4,8 @@ import datetime
 
 
 class UserModel(db.Model):
+    __tablename__ = 'usuario'
+    
     """
     Modelo que armazena todos os usuários cadastrados.
     """
@@ -30,13 +32,15 @@ class UserModel(db.Model):
 
 
 class SubjectModel(db.Model):
+    __tablename__ = 'disciplina'
+
     """
     Modelo que armazena todas disciplinas cadastradas pelos usuarios.
     """
     id = db.Column(db.Integer, primary_key=True)
     sub_name = db.Column(db.String, nullable=False)
     sub_group = db.Column(db.String, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('UserModel.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
 
     user_associated = db.relationship('SubuserModel', backref='subj_associate', passive_deletes=True)
     presence_count = db.relationship('PresenceModel', backref='subject_info', passive_deletes=True)
@@ -48,13 +52,15 @@ class SubjectModel(db.Model):
 
 
 class SubuserModel(db.Model):
+    __tablename__ = 'disciplina_usuario'
+    
     """
     Modelo de controle das disciplinas associadas ao usuário apos a falta ser computada.
     """
     id = db.Column(db.Integer, primary_key=True)
     is_active = db.Column(db.Boolean, default=True)
-    sub_id = db.Column(db.Integer, db.ForeignKey('subject.id', ondelete="CASCADE"))
-    user_id = db.Column(db.Integer, db.ForeignKey('UserModel.id'))
+    sub_id = db.Column(db.Integer, db.ForeignKey('disciplina.id', ondelete="CASCADE"))
+    user_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
 
     absences = db.relationship('AbsenceModel', backref='user_absence', passive_deletes=True, order_by='AbsenceModel.date')
 
@@ -64,13 +70,15 @@ class SubuserModel(db.Model):
 
 
 class AbsenceModel(db.Model):
+    __tablename__ = 'preseca'
+    
     """
     Modelo que armazena todas as validações de presença feitas pelos usuarios.
     """
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.DateTime, nullable=False)
     device_id = db.Column(db.String(80), nullable=False)
-    usubj_id = db.Column(db.Integer, db.ForeignKey('subuser.id', ondelete="CASCADE"))
+    usubj_id = db.Column(db.Integer, db.ForeignKey('disciplina_usuario.id', ondelete="CASCADE"))
     dup_security = db.Column(db.Integer, nullable=False)
 
     def __init__(self, date, user_absence, device_id, dup_security):
@@ -90,11 +98,13 @@ class AbsenceModel(db.Model):
 
 
 class PresenceModel(db.Model):
+    __tablename__ = 'preseca_dia'
+    
     """
     Modelo que armazena a contagem e os dias em que foi feita a realização da chamada.
     """
     id = db.Column(db.Integer, primary_key=True)
-    sub_id = db.Column(db.Integer, db.ForeignKey('subject.id', ondelete="CASCADE"))
+    sub_id = db.Column(db.Integer, db.ForeignKey('disciplina.id', ondelete="CASCADE"))
     date = db.Column(db.DateTime, nullable=False)
 
     __table_args__ = (

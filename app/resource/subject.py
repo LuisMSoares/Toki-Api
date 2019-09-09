@@ -30,13 +30,16 @@ class OwnerSubjectResource(Resource):
 
     #json validator: {'sname':type('string'), 'sgroup':type('string'), 'sid':type('int'), 'upass':type('string')}
     @jwt_required
-    def put(self):
+    def put(self, subject_id=None):
+        if subject_id:
+            return self.deleteSubject(subject_id)
+
         user = UserModel.query.filter_by(id=get_jwt_identity()).first()
         if not user.verify_password(request.json['upass']):
             return {'Error': 'Senha informada incorreta!'}, 401
         subject = SubjectModel.query.filter_by(id=request.json['sid']).first()
         if subject == None:
-            return {'Error': 'Registro não encontrado'}), 404
+            return {'Error': 'Registro não encontrado'}, 404
         subject.sub_name = request.json['sname']
         subject.sub_group = request.json['sgroup']
         if not AddData(subject):
@@ -44,15 +47,14 @@ class OwnerSubjectResource(Resource):
         return {'Success': 'Registro realizado com sucesso'}, 200
     
     #json validator: {'upass':type('string'),}
-    @jwt_required
-    def delete(self, subject_id):
+    def deleteSubject(self, subject_id):
         user = UserModel.query.filter_by(id=get_jwt_identity()).first()
         if not user.verify_password(request.json['upass']):
-            return jsonify({'Error': 'Senha informada incorreta!'}), 401
+            return {'Error': 'Senha informada incorreta!'}, 401
         subj = SubjectModel.query.filter_by(id=subject_id).first()
         if not DeleteData(subj):
-            return jsonify({'Error': 'Ocorreu algum erro ao deletar a disciplina'}), 400
-        return jsonify({'Success': 'Disciplina removida com sucesso'}), 200
+            return {'Error': 'Ocorreu algum erro ao deletar a disciplina'}, 400
+        return {'Success': 'Disciplina removida com sucesso'}, 200
 
 
 class AssociateSubjectResource(Resource):
@@ -61,7 +63,7 @@ class AssociateSubjectResource(Resource):
         user = UserModel.query.filter_by(id=get_jwt_identity()).first()
         values, my_associations = [], user.subj_associated
         if len(my_associations) == 0:
-            return jsonify({'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}), 404
+            return {'Error':'Nenhuma disciplina relacionada ao usuario foi encontrada'}, 404
         for sjuser in my_associations:
             if sjuser.is_active:
                 v, qtpresence = {}, len(sjuser.subj_associate.presence_count)
@@ -76,7 +78,7 @@ class AssociateSubjectResource(Resource):
                 v['subname'] = sjuser.subj_associate.sub_name
                 v['subgroup'] = sjuser.subj_associate.sub_group
                 values.append(v)
-        return jsonify({'values': values}), 200
+        return {'values': values}, 200
 
 
     @jwt_required
@@ -89,4 +91,4 @@ class AssociateSubjectResource(Resource):
             AddData(subuser)
         except:
             pass
-        return jsonify({'Success': 'Disciplina desativada com sucesso'}), 200
+        return {'Success': 'Disciplina desativada com sucesso'}, 200

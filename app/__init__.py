@@ -30,25 +30,16 @@ api = Api(app)
 api.prefix = '/api'
 
 
+from app.resource import (LoginResource, UserResource,
+OwnerSubjectResource, AssociateSubjectResource,
+AbsenceResource, ValidateAbsenceResource)
 
-
-
-
-
-# Routes blueprints
-
-#  user route
-from app.routes.user import uapp
-app.register_blueprint(uapp, url_prefix='/user')
-#  subject route
-from app.routes.subject import sapp
-app.register_blueprint(sapp, url_prefix='/subject')
-#  absence route
-from app.routes.absence import abapp
-app.register_blueprint(abapp, url_prefix='/absence')
-#  validade absence route
-from app.routes.vabsence import abvapp
-app.register_blueprint(abvapp, url_prefix='/absence')
+api.add_resource(UserResource, '/user') #ok
+api.add_resource(LoginResource, '/login') #ok
+api.add_resource(OwnerSubjectResource, '/subject', '/subject/<int:subject_id>')
+api.add_resource(AssociateSubjectResource, '/subject/associate')
+api.add_resource(AbsenceResource, '/absence')
+api.add_resource(ValidateAbsenceResource, '/absence/validate') #ok
 
 
 # Status code routes
