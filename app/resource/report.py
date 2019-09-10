@@ -7,12 +7,12 @@ from app.services import Excel
 
 class ReportResource(Resource):
     @jwt_required
-    def get(self, subjid):
-        ab_users = SubuserModel.query.filter_by(sub_id=subjid).all()
+    def get(self, subject_id):
+        ab_users = SubuserModel.query.filter_by(sub_id=subject_id).all()
         if len(ab_users) == 0:
             return {'Error':'Nenhum discente relacionado a disciplina foi encontrado'}, 404
         ab_users.sort(key=lambda x: int(x.enrolment))
-        presence = PresenceModel.query.filter_by(sub_id=subjid).options(load_only('date'))
+        presence = PresenceModel.query.filter_by(sub_id=subject_id).options(load_only('date'))
         qt_presence = len(presence)
         values = []
         for ab_user in ab_users:

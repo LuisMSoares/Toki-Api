@@ -40,7 +40,7 @@ api.add_resource(OwnerSubjectResource, '/subject', '/subject/<int:subject_id>')
 api.add_resource(AssociateSubjectResource, '/subject/associate')
 api.add_resource(AbsenceResource, '/absence')
 api.add_resource(ValidateAbsenceResource, '/absence/validate') #ok
-api.add_resource(ReportResource, '/absence/report') #ok
+api.add_resource(ReportResource, '/absence/report/<int:subject_id>') #ok
 
 
 # Status code routes
