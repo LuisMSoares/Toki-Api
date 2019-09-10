@@ -5,3 +5,5 @@ from app.resource.subject import OwnerSubjectResource, AssociateSubjectResource
 
 from app.resource.absence import AbsenceResource
 from app.resource.validateAbsence import ValidateAbsenceResource
+
+from app.resource.report import ReportResource
