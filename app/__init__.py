@@ -32,7 +32,7 @@ api.prefix = '/api'
 
 from app.resource import (LoginResource, UserResource,
 OwnerSubjectResource, AssociateSubjectResource,
-AbsenceResource, ValidateAbsenceResource)
+AbsenceResource, ValidateAbsenceResource, ReportResource)
 
 api.add_resource(UserResource, '/user') #ok
 api.add_resource(LoginResource, '/login') #ok
