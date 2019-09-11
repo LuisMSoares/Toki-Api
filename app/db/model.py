@@ -89,7 +89,7 @@ class AbsenceModel(db.Model):
         self.dup_security = dup_security
     
     def PresenceCount(self, sub_id):
-        return Presence(sub_id=sub_id ,date=self.date)
+        return PresenceModel(sub_id=sub_id ,date=self.date)
     
     __table_args__ = (
         db.Index('duplicated_device', dup_security, device_id, date, unique=True),

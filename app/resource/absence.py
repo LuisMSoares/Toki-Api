@@ -25,7 +25,7 @@ class AbsenceResource(Resource):
         ab_users = SubuserModel.query.filter_by(sub_id=subjid).all()
         if len(ab_users) == 0:
             return {'Error':'Nenhum discente relacionado a disciplina foi encontrado'}, 404
-        ab_users.sort(key=lambda x: int(x.enrolment))
+        ab_users.sort(key=lambda x: int(x.user_associate.enrolment))
         presence = PresenceModel.query.filter_by(sub_id=subjid).options(load_only('date'))
         date_presence = [row.date.strftime("%Y-%m-%d") for row in presence]
         qt_presence = len(date_presence)

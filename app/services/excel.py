@@ -8,7 +8,7 @@ class Excel:
     @staticmethod
     def report_by_array(array_data, file_type="csv", file_name="export_data"):
         return excel.make_response_from_array(
-            data,
+            array_data,
             file_type,
             file_name=file_name
         )
