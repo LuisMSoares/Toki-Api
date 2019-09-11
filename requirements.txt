@@ -1,7 +1,12 @@
 Flask
+flask-Migrate
+flask-restful
 flask-sqlalchemy
 flask-jwt-extended
+flask-excel
+pyexcel-xls
+jsonschema
+passlib
 gunicorn
 psycopg2
 psycopg2-binary
-passlib

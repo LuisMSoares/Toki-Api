@@ -1,3 +1,4 @@
 .vscode
+app/foo.db
 __pycache__
 datavolume
