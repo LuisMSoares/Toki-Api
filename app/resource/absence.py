@@ -33,7 +33,7 @@ class AbsenceResource(Resource):
         for ab_user in ab_users:
             v = {}
             absences = ab_user.absences
-            qt_absence, user = len(absences, ab_user.user_associate)
+            qt_absence, user = len(absences), ab_user.user_associate
             v['userid']    = user.id
             v['username']  = f'{user.username} - {user.enrolment}'
             v['presencas'] = qt_absence 
